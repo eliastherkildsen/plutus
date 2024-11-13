@@ -19,18 +19,16 @@ services:
   
   # DATABASE
   mongo:
-    image: mongo:7
+    image: mongo:bionic
     container_name: mongo
     ports:
       - "27017:27017"
     volumes:
-      - mongo-data:/data/db
-    command: ["--noauth"]  # Disables authentication
+      - ./mongo-data:/data/db
     networks:
       - plutus-network
 
-volumes:
-  mongo-data:
+
 
 networks:
   plutus-network:
