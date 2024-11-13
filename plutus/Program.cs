@@ -1,44 +1,51 @@
-var builder = WebApplication.CreateBuilder(args);
+using plutus.Entity;
+using plutus.Repository;
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+namespace plutus;
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+public class Program
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
+    public static void Main(string[] args)
     {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
+        
+        var builder = WebApplication.CreateBuilder(args);
+        //builder.WebHost.ConfigureKestrel(options => options.ListenLocalhost(5000));
+        
+        // Add services to the container.
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+        
+        builder.Services.Configure<ParcelDatabase>(
+            builder.Configuration.GetSection("DatabaseSettings"));
+        builder.Services.AddSingleton<IParcelRepository, ParcelRepository>();
+        
+        var app = builder.Build();
 
-app.Run();
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        app.UseHttpsRedirection();
+        
+        
+     
+        app.MapGet("/parcel/", async (string id, IParcelRepository catRepo) =>
+        {
+            return await catRepo.Get(id);
+        });
+        
+        app.MapGet("/parcels/", async (IParcelRepository catRepo) => await catRepo.GetAll());
+        
+        
+        app.MapPost("/parcel/", async (Parcel parcel, IParcelRepository catRepo) =>
+        {
+            await catRepo.Add(parcel);
+        });
+        
+        app.Run();
+    }    
 }
