@@ -34,9 +34,10 @@ public class ParcelRepository : IParcelRepository
     }
 
     // Other repository methods (Add, Get, GetAll)
-    public async Task Add(Parcel parcel)
+    public async Task<Parcel> Add(Parcel parcel)
     {
         await _parcel.InsertOneAsync(parcel);
+        return parcel;
     }
 
     public async Task<Parcel> Get(string id)
@@ -47,5 +48,10 @@ public class ParcelRepository : IParcelRepository
     public Task<List<Parcel>> GetAll()
     {
         return _parcel.Find(parcel => true).ToListAsync();
+    }
+
+    public async Task<Parcel> Update(string id, Parcel parcel)
+    {
+        return await _parcel.FindOneAndReplaceAsync(p => p.Id == id, parcel);
     }
 }
