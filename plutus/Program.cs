@@ -33,17 +33,17 @@ public class Program
         
         
      
-        app.MapGet("/parcel/", async (string id, IParcelRepository catRepo) =>
+        app.MapGet("/parcel/", async (string id, IParcelRepository parcelRepository) =>
         {
-            return await catRepo.Get(id);
+            return await parcelRepository.Get(id);
         });
         
-        app.MapGet("/parcels/", async (IParcelRepository catRepo) => await catRepo.GetAll());
+        app.MapGet("/parcels/", async (IParcelRepository parcelRepository) => await parcelRepository.GetAll());
         
         
-        app.MapPost("/parcel/", async (Parcel parcel, IParcelRepository catRepo) =>
+        app.MapPost("/parcel/", async (Parcel parcel, IParcelRepository parcelRepository) =>
         {
-            await catRepo.Add(parcel);
+            await parcelRepository.Add(parcel);
         });
         
         app.Run();
