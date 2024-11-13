@@ -48,4 +48,8 @@ public class ParcelRepository : IParcelRepository
     {
         return _parcel.Find(parcel => true).ToListAsync();
     }
+    public async Task Update(string id, Parcel parcel)
+    {
+        await _parcel.FindOneAndReplaceAsync(p => p.Id == id, parcel);
+    }
 }
