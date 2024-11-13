@@ -1,0 +1,6 @@
+@plutus_HostAddress = http://localhost:5188
+
+GET {{plutus_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
