@@ -1,4 +1,5 @@
 using plutus.Entity;
+using plutus.IRepository;
 using plutus.Repository;
 
 namespace plutus;

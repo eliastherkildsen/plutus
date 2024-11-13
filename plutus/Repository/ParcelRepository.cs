@@ -1,15 +1,11 @@
 ﻿using plutus.Entity;
+using plutus.IRepository;
 
 namespace plutus.Repository;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
-internal interface IParcelRepository
-{
-    Task Add(Parcel parcel);
-    Task<Parcel> Get(string id);
-    Task<List<Parcel>> GetAll();
-}
+
 public class ParcelRepository : IParcelRepository
 {
     private readonly IMongoCollection<Parcel> _parcel;
