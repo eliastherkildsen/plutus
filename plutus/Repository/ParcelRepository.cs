@@ -1,4 +1,5 @@
-﻿using plutus.Entity;
+﻿using System.Data;
+using plutus.Entity;
 using plutus.IRepository;
 
 namespace plutus.Repository;
@@ -32,10 +33,29 @@ public class ParcelRepository : IParcelRepository
             return false; // Connection failed
         }
     }
-
+    
+    /// <summary>
+    /// Method for determining if a parcelId exists in the database. 
+    /// </summary>
+    /// <param name="parcelId"></param>
+    /// <returns></returns>
+    private async Task<bool> DoesParcelExistAsync(string parcelId)
+    {
+        var response = await _parcel.FindAsync(parcel => parcel.Id == parcelId);
+        return await response.AnyAsync();
+    }
+    
     // Other repository methods (Add, Get, GetAll)
     public async Task Add(Parcel parcel)
     {
+        
+        // Validating the parcel
+        ParcelValidator.ValidateParcel(parcel);
+
+        // Checking if a parcel with the id already exists in the database. 
+        var response = await DoesParcelExistAsync(parcel.Id);   
+        if (response) throw new DuplicateNameException($"Parcel with id: {parcel.Id} already exists.");
+        
         await _parcel.InsertOneAsync(parcel);
     }
 
@@ -50,6 +70,14 @@ public class ParcelRepository : IParcelRepository
     }
     public async Task Update(string id, Parcel parcel)
     {
+        
+        // Validating the parcel
+        ParcelValidator.ValidateParcel(parcel);
+        
+        // Checking if a parcel with the id exists in the database. 
+        var response = await DoesParcelExistAsync(parcel.Id);   
+        if (!response) throw new ArgumentException($"Parcel with id: {parcel.Id} does not exist.");
+        
         await _parcel.FindOneAndReplaceAsync(p => p.Id == id, parcel);
     }
 }
