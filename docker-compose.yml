@@ -25,6 +25,8 @@ services:
       - "27017:27017"
     networks:
       - plutus-network
+    volumes:
+      - ./mongoA-data:/data/db
 
 
 
