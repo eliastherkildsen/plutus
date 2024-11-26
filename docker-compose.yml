@@ -23,10 +23,10 @@ services:
     container_name: mongo
     ports:
       - "27017:27017"
-    volumes:
-      - ./mongo-data:/data/db
     networks:
       - plutus-network
+    volumes:
+      - ./mongoA-data:/data/db
 
 
 
